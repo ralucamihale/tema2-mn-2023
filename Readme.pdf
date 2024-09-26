@@ -1,0 +1,63 @@
+	TEMA 2 METODE NUMERICE -MIHALE CATALINA RALUCA 312CB
+	
+	TASK 1
+	Pentru inceput, am castat imaginea data ca parametru la double.
+	Apoi, am folosit functia Octave svd pentru a efectua descompunerea imaginii si am obtinut matricele U, S si V. Am transpus matricea V, pentru ca functia svd nu returneaza transpusa lui V care e necesara pentru constructia matricei new_X.
+	Am transformat U, S si V, astfel: am pastrat toate liniile si primele k coloane din U, primele k linii si primele k coloane din S, si primele k linii si toate coloanele din V. Apoi, am inmultit aceste matrice pentru a forma matricea new_X, o aproximare comprimata a imaginii initiale.
+	Pentru a obtine o imagine valida, am castat new_X la uint8.
+	
+	TASK 2
+	Pentru inceput, am castat imaginea data ca parametru la double.
+	Am folosit functia sum cu argumentul 2 pentru a calcula suma elementelor de pe fiecare linie a imaginii. Am impartit vectorul rezultat miu la numarul de coloane n pentru a calcula media fiecarei linii.
+	Pentru fiecare linie a matricei imagine am scazut media corespunzatoare.
+	Am construit matricea Z prin a transpune imaginea rezultata dupa scaerea mediei si a imparti rezultatul la sqrt(n-1).
+	Am folosit functia svd pentru a descompune matricea Z si am creat matricea W care reprezinta spatiul componentelor principale de marime pcs prin a pastra toate liniile si primele pcs coloane din matricea V.
+	Am calculat proiectia imaginii in spatiul componentelor principale, matricea Y, prin inmultirea transpusei lui W cu imaginea.
+	Pentru a calcula aproximarea matricei initiale new_X am inmultit matricea Y cu W, iar apoi fiecarei linii am adaugat media corespunzatoare.
+	Pentru a obtine o imagine valida, am castat new_X la uint8.
+	
+	TASK 3
+	Pentru inceput, am castat imaginea data ca parametru la double.
+	Am folosit functia sum cu argumentul 2 pentru a calcula suma elementelor de pe fiecare linie a imaginii. Am impartit vectorul rezultat miu la numarul de coloane n pentru a calcula media fiecarei linii.
+	Pentru fiecare linie a matricei imagine am scazut media corespunzatoare.
+	Am construit matricea de covarianta inmultind imaginea cu transpusa ei, si impartind rezultatul la n-1.
+	Am aflat vectorii proprii V si valorile proprii S aplicand functia Octave eig asupra matricei de covarianta Z.
+	Am folosit functia sort cu argumentul optional "descend" aplicata pe diagonala matricei S pentru a sorta valorile proprii descrescator si a afla indicii in matricea initiala ai valorilor sortate, care vor fi stocati in aux.
+	Pentru a ordona vectorii proprii in ordine descrescatoare a valorilor proprii, am transformat matricea V prin a reordona coloanele dupa indicii stocati in vectorul aux.
+	Spatiul componentelor principale W se creaza prin a stoca primele pcs coloane din matricea vectorilor proprii ordonati V.
+	Am calculat proiectia imaginii in spatiul componentelor principale, matricea Y, prin inmultirea transpusei lui W cu imaginea.
+	Pentru a calcula aproximarea matricei initiale new_X am inmultit matricea Y cu W, iar apoi fiecarei linii am adaugat media corespunzatoare.
+	Pentru a obtine o imagine valida, am castat new_X la uint8.
+	
+	TASK 4
+	- prepare_data
+	Am folosit functia load(name) pentru a incarca datele din fisierul MNIST.mat. Am folosit comanda d.trainX si am retinut primele no_train_images linii din matricea rezultata pentru a obtine matricea de date de antrenament, train_mat. Am folosit comanda d.trainY si am retinut primele no_train_images coloane din vectorul rezultat pentru a obtine vectorul de etichete care indica ce numar se afla in fiecare imagine, train_val.
+	
+	- visualise_image
+	Am retinut in vectorul line linia cu numarul number din matricea de antrenament. Am aplicat asupra lui line functia Octave reshape cu argumentele 28 si 28 pentru a transforma vectorul intr-o matrice cu 28 de linii si 28 de coloanec corespunzatoare celor 28x28 pixeli. Am transpus matricea rezultata si am salvat-o in matricea im. Pentru a obtine o imagine valida, am castat matricea im la uint8.
+	
+	- magic_with_pca
+	Am castat matricea de antrenament train_mat la double.
+	Am folosit functia sum fara argument in plus pentru a calcula suma elementelor de pe fiecare coloana a matricei. Am impartit vectorul rezultat miu la numarul de linii m pentru a calcula media fiecarei coloane
+	Pentru fiecare coloana a matricei imagine am scazut media corespunzatoare.
+	Am construit matricea de covarianta inmultind train_mat cu transpusa ei, si impartind rezultatul la m-1.
+	Am aflat vectorii proprii V si valorile proprii S aplicand functia Octave eig asupra matricei de covarianta cov_matrix.
+	Am folosit functia sort cu argumentul optional "descend" aplicata pe diagonala matricei S pentru a sorta valorile proprii descrescator si a afla indicii in matricea initiala ai valorilor sortate, care vor fi stocati in aux.
+	Pentru a ordona vectorii proprii in ordine descrescatoare a valorilor proprii, am transformat matricea V prin a reordona coloanele dupa indicii stocati in vectorul aux.
+	Spatiul componentelor principale Vk se creaza prin a stoca primele pcs coloane din matricea vectorilor proprii ordonati V.
+	Am calculat proiectia matricei de antrenament in spatiul componentelor principale, matricea Y, prin inmultirea lui Vk cu matricea de antrenament.
+	Pentru a calcula aproximarea matricei initiale train am inmultit matricea Y cu transpusa lui Vk.
+	
+	- prepare_photo
+	Am inversat pixelii matricei prin a scadea valorile tuturor pixelilor din 255 (valoarea maxima a unui pixel fiind 255). Am transpus imaginea rezultata si am aplicat asupra ei functia reshape pentru a obtine un vector de 784 de elemente.
+	
+	- KNN
+	Pentru fiecare linie a matricei Y, am calculat distanta euclidiana dintre aceasta si vectorul de test aplicand functia norm.
+	Folosind functia sort, am ordonat vectorul de distante crescator, retinand intr-un vector aux indicii corespunzatori elementelor sortate. In vectorul de etichete labels, am pastrat valorile din labels care corespund cu primele k pozitii din aux, adica numerele corespunzatoare pozitiilor.
+	Am aplicat functia Octave median vectorului rezultat labels pentru a afla predictia.
+	
+	- classifyimage
+	Am castat imaginea im la double.
+	Am aplicat matricei de antrenament train_mat functia magic_with_pca pentru a afla: aproximarea ei train, vectorul de medii miu, proiectia matricei in spatiul componentelor principale Y si matricea corespunzatoare acestui spatiu Vk.
+	Am scazut din vectorul imagine im media fiecarei coloane din train_mat miu si am schimbat apoi baza imaginii prin a inmulti cu matricea Vk.
+	Am calculat predictia folosind functia KNN, careia i-am dat ca argument vectorul de etichete train_val, proiectia matricei de antrenament Y, imaginea de test im si k = 5.
